@@ -12,19 +12,24 @@
 
 ---
 
-A practical, calibration-lean BEV fusion pipeline for maritime scenes.
-It time-aligns monocular RGB with forward LiDAR, rasterizes points into BEV, and trains a compact fusion head for occupancy/obstacle likelihood over water.
+practical, calibration-optional BEV fusion pipeline for maritime perception.  
+It time-aligns monocular RGB with forward LiDAR, rasterizes points into bird’s-eye view (BEV), and trains an efficient fusion head to estimate obstacle likelihood on the water.
+
 
 Latest validation(e.g. N = 4): Fusion mIoU 0.93 / 0.90 / 0.94 / 0.94 per panel at thr=0.60 (qualitative set), and mIoU 0.837 @ best_thr 0.95 from metrics.json. Best sweep epoch: mIoU 0.866 @ thr 0.75 with Recall ≈ 0.992 and strong ROC-AUC.
 
 
 - [Installation](#installation)
-- [Usage](#usage)
-- [Project Overview](#Project_Overview)
-- [Resource Management for CPU and GPU Allocation](Resource_Management_for_CPU_and_GPU_Allocation)
-- [Modular and Configuration](#Modular_and_Configuration)
+- [Quick Start](#quick-start)
+- [Project Overview](#project-overview)
+- [Project Structure](#project-structure)
+- [Configuration (base.yaml)](#configuration-baseyaml)
+- [Data & Preprocessing](#data--preprocessing)
+- [Model](#model)
+- [Resource Management (CPU/GPU)](#resource-management-cpugpu)
+- [Results](#results)
+- [Qualitative Results (Validation Panels)](#qualitative-results-validation-panels)
 - [License](#license)
-- [Summary of Analysis of Model Performance](#Summary_of_Analysis_of_Model_Performance)
 
 
 
@@ -43,11 +48,13 @@ OpenCV, NumPy, SciPy, Matplotlib
 (Optional) cuDNN/CUDA for GPU acceleration
 
 ### Setup
+
 ```bash
-git clone https://github.com/<your-org-or-user>/<repo-name>.git
-cd <repo-name>
+git clone https://github.com/NaderNemati/Image-LiDAR-Fusion-for-Maritime-Perception-SimpleBEV-XS-.git
+cd Image-LiDAR-Fusion-for-Maritime-Perception-SimpleBEV-XS-
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+
 ```
 # Quick Start
 
@@ -83,7 +90,8 @@ python -m src.eval \
 
 # Project Overview
 
-The aim of this project is to deliver reliable obstacle and occupancy estimates in challenging maritime scenes, where RGB alone lacks depth cues and LiDAR can be sparse or reflective. We address this by fusing both modalities directly in bird’s-eye view (BEV): image features are lifted into BEV and concatenated with a LiDAR hit histogram, then a lightweight decoder produces fused logits. The workflow runs without precise extrinsics—by default it uses adaptive BEV lifting and, when a calib.json is available, can switch to geometrically grounded voxel lifting for tighter alignment. The data pipeline is deliberately deterministic: image–LiDAR pairing is reproducible, the raster window is fixed, and transforms like swap_xy and flip_x are explicit. To keep iteration fast, configuration lives in a single file and common actions (pairing, training, evaluation, visualization) are scripted, with all artifacts written under outputs/<run> for clean tracking and comparison.
+The aim of this project is robust obstacle and occupancy estimation in challenging maritime scenes where RGB alone lacks depth cues and LiDAR can be sparse or reflective. We fuse both modalities directly in bird’s-eye view (BEV): image features are lifted into BEV and concatenated with a LiDAR hit histogram, then an efficient decoder produces fused logits. The workflow runs without precise extrinsics—by default it uses adaptive BEV lifting and, when a `calib.json` is available, can switch to geometrically grounded voxel lifting for tighter alignment. The data pipeline is deterministic: image–LiDAR pairing is reproducible, the raster window is fixed, and transforms like `swap_xy` and `flip_x` are explicit. To keep iteration fast, configuration is centralized and common actions (pairing, training, evaluation, visualization) are scripted, with all artifacts written under `outputs/<run>` for clean tracking and comparison.
+
 
 
 # Project Structure
@@ -200,6 +208,8 @@ The trainer accepts Flower-style resource keys for consistency with your FL proj
 client_resources = {'num_cpus': 1, 'num_gpus': 0.0}  # set 0.2 to share a GPU
 ```
 Set num_gpus to a fractional value (e.g., 0.2) to time-share a single GPU across multiple workers—useful when iterating on configs quickly. (Mirrors your resource notation so teams see a uniform pattern across repos. )
+
+
 
 # Results
 
