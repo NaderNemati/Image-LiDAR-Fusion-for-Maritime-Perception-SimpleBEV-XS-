@@ -1,0 +1,48 @@
+# conf/base.yaml
+paths:
+  root: ./datasets
+  out: ./outputs/rebalanced_fusion
+  pairs_csv: datasets/maritime_pairs.csv
+
+image:
+  h: 256
+  w: 448
+
+bev:
+  h: 128
+  w: 128
+  meters_x: 40      # forward
+  meters_y: 30      # lateral
+  z_min: -3
+  z_max: 3
+  swap_xy: true
+  flip_x: true
+
+raster:
+  norm: log1p       # histogram normalization
+  blur_ksize: 3     # viz only
+  dilate_ks: 3      # viz only
+
+model:
+  backbone: simplebev_xs
+  lifted: adaptive   # [adaptive|voxel]
+  heads: [fusion, cam_only, aux_only]
+
+train:
+  epochs: 50
+  batch_size: 4
+  lr: 5.0e-4
+  weight_decay: 1.0e-2
+  amp: true
+
+eval:
+  thr_sweep: true
+  thr_default: 0.60
+
+viz:
+  fov_deg: 120
+  p_low: 0.5
+  p_high: 99.5
+  gamma: 0.6
+  colormap: true
+
