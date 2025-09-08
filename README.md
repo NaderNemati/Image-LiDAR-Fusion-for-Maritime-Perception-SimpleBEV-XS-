@@ -162,7 +162,7 @@ Time Alignment
 
 Filenames carry ns timestamps; align RGB↔LiDAR using constant offset with tolerance ±800 ms.
 
-Current experiments use an 80/20 split with N=4 validation frames (matches metric counts).
+Current experiments use an 80/20 split validation frames (matches metric counts).
 
 BEV Rasterization
 
@@ -178,6 +178,10 @@ Voxel lifting when calib.json is provided.
 
 
 # Model
+
+The network predicts a BEV occupancy map by combining RGB features and a LiDAR hit histogram in the same grid. An RGB 4-stage CNN encodes the image to (B,128,H/16,W/16). Those features are lifted to BEV either via a parameter-free voxel sampler (uses calib.json if available) or an adaptive-pooling fallback when calibration is missing. In parallel, LiDAR points are rasterized into a 1-channel BEV histogram.
+
+Both streams are processed in BEV: each is compressed to 32 channels and passed through shallow residual BEV blocks. We then concatenate the two BEV tensors and decode three logits: Fused (primary output), Cam-only, and Aux-only (LiDAR branch). Training uses BCE (with positive reweighting) + soft Dice, AdamW (lr=5e-4, wd=1e-2), and small robustness tricks (occasional aux dropout/noise and a camera-only fused pass) so the model remains stable even when the auxiliary signal is weak or missing. The result is a single, thresholdable BEV map that captures dock/edge structure and suppresses spurious water responses.
 
 | Layer / Block                 |                       Input Shape |         Output Shape |    Kernel | Stride | Padding | Additional Info                                                                     |
 | ----------------------------- | --------------------------------: | -------------------: | --------: | -----: | ------- | ----------------------------------------------------------------------------------- |
@@ -202,7 +206,6 @@ Voxel lifting when calib.json is provided.
 
 # Resource Management (CPU/GPU)
 
-The trainer accepts Flower-style resource keys for consistency with your FL projects:
 ```python
 # inside src/train.py
 client_resources = {'num_cpus': 1, 'num_gpus': 0.0}  # set 0.2 to share a GPU
