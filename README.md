@@ -11,3 +11,5 @@
 </div>
 
 ---
+
+The repository is organized to keep data prep, training, evaluation, and visualization clearly separated. If you’re new, start with the Quickstart below, then use this map as your guide.
