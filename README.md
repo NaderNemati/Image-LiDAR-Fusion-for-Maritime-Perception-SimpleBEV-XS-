@@ -220,21 +220,6 @@ Best epoch across the sweep (internal log):
 
 Fusion mIoU 0.866 @ thr 0.75, Recall ≈ 0.992, latency ≈ 237 ms.
 
-### Qualitative Examples
-
-## Qualitative Results (Validation Panels)
-
-| Panel 0 | Panel 1 |
-|---|---|
-| <a href="outputs/rebalanced_fusion/viz/val_00_panel.png"><img src="outputs/rebalanced_fusion/viz/val_00_panel.png" width="720" alt="Panel 0"/></a> | <a href="outputs/rebalanced_fusion/viz/val_01_panel.png"><img src="outputs/rebalanced_fusion/viz/val_01_panel.png" width="720" alt="Panel 1"/></a> |
-
-| Panel 2 | Panel 3 |
-|---|---|
-| <a href="outputs/rebalanced_fusion/viz/val_02_panel.png"><img src="outputs/rebalanced_fusion/viz/val_02_panel.png" width="720" alt="Panel 2"/></a> | <a href="outputs/rebalanced_fusion/viz/val_03_panel.png"><img src="outputs/rebalanced_fusion/viz/val_03_panel.png" width="720" alt="Panel 3"/></a> |
-
-
-
-___________________
 
 ## Qualitative Results (Validation Panels)
 
